@@ -17,6 +17,7 @@ using namespace std;
 
 const bool syDebug=false;
 const bool rpnDebug=false;
+const bool tblDebug=false;
 
 //FOR TOKENIZER
 const int MAX_COLUMNS = 256;

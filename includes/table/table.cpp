@@ -272,9 +272,12 @@ Table Table::_select_recnos(const vectorstr& fields, const vectorlong& recnos){
     for(int i=0; i<recnos.size(); i++){
         t.insert_into(_get_record(fields, recnos[i]));
     }
-    cout<<"================"<<endl;
-    cout<<t<<endl;
-    cout<<"================"<<endl;
+    t.set_recnos(recnos);
+    if(tblDebug){
+        cout<<"================"<<endl;
+        cout<<t<<endl;
+        cout<<"================"<<endl;
+    }
     return t;
 }
 vectorstr& Table::get_fields(){

@@ -19,26 +19,26 @@ Table SQL::command(const string& cmd){
     if(s=="make"||s=="create"){
         t=Table(tablename,ptree["fields"]);
     }
-    if(s=="select"){
+    else if(s=="select"){
         t=Table(tablename);
         if(ptree["fields"][0]=="*"){
             if(ptree.contains("condition")){
-                t.select(t.get_fields(),ptree["condition"]);
+                t=t.select(t.get_fields(),ptree["condition"]);
             }
             else
-                t.select_all();
+                t=t.select_all();
         }
         else{
             if(ptree.contains("condition")){
-                t.select(ptree["fields"],ptree["condition"]);
+                t=t.select(ptree["fields"],ptree["condition"]);
             }
             else{
-                t.select_all(ptree["fields"]);
+                t=t.select_all(ptree["fields"]);
                 t.set_fields(ptree["fields"]);
             }
         }
     }
-    if(s=="insert"){
+    else if(s=="insert"){
         t=Table(tablename);
         t.insert_into(ptree["values"]);
     }
