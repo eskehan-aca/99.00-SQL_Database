@@ -10,8 +10,7 @@ const vectorstr command_list = {
 "insert into student values 	\"Flo\", 			\"Jackson\", 	Math,	 			21", 
 "insert into student values 	Calvin, 		Woo, 		Physics,			22", 
 "insert into student values 	\"Anna Grace\", 	\"Del Rio\", 	CS,	 				22", 
-"select * from student",
-"select * from student where lname = \"Del Rio\""
+"select * from student"
 };
 
 bool test_stub(bool debug=false){
@@ -22,6 +21,8 @@ bool test_stub(bool debug=false){
       cout<<">"<< command_list[i] << endl;
       cout<<sql.command(command_list[i]);
   }
+  cout<<">"<< "select * from student where lname = \"Del Rio\"" << endl;
+  cout<<sql.command("select * from student where lname = \"Del Rio\"");
   return true;
 }
 

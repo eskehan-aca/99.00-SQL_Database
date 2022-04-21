@@ -94,33 +94,56 @@ Queue<Token*> Table::_tokenize_vectorstr(const vectorstr& infix){
         Token t;
         stk>>t;
         // cout<<t<<endl;
-        switch(t.type()){
-            case TOKEN_NUMBER:
-            case TOKEN_ALPHA:{
-                if(t.token_str()=="and"||t.token_str()=="or"){
-                    q.push(new Logical(t.token_str()));
+        if(t.token_str().size()!=infix[i].size()){
+            // cout<<"token quote: "<<t.token_str()<<endl;
+                string s="";
+                while(stk.more()){
+                    s+=t.token_str();
+                    stk>>t;
+                }
+                // cout<<"pushed "<<s<<endl;
+                q.push(new TokenStr(s));
+        }
+        else{       
+            switch(t.type()){
+                case TOKEN_NUMBER:
+                case TOKEN_ALPHA:{
+                    if(t.token_str()=="and"||t.token_str()=="or"){
+                        q.push(new Logical(t.token_str()));
+                        break;
+                    }
+                    q.push(new TokenStr(t.token_str()));
                     break;
                 }
-                q.push(new TokenStr(t.token_str()));
-                break;
-            }
-            case TOKEN_OPERATOR:{
-                q.push(new Relational(t.token_str()));
-                break;
-            }
-            case TOKEN_UNKNOWN:{
-                if(t.token_str()=="("){
-                    q.push(new LParen());
+                case TOKEN_OPERATOR:{
+                    q.push(new Relational(t.token_str()));
                     break;
                 }
-                else if(t.token_str()==")"){
-                    q.push(new RParen());
+                case TOKEN_UNKNOWN:{
+                    if(t.token_str()=="("){
+                        q.push(new LParen());
+                        break;
+                    }
+                    else if(t.token_str()==")"){
+                        q.push(new RParen());
+                        break;
+                    }
+                }
+                // case TOKEN_QUOTE:{
+                //     cout<<"token quote: "<<t.token_str()<<endl;
+                //     string s="";
+                //     while(stk.more()){
+                //         s+=t.token_str();
+                //         stk>>t;
+                //     }
+                //     cout<<"pushed "<<s<<endl;
+                //     q.push(new TokenStr(s));
+                //     break;
+                // }
+                default:{
+                    // cout<<"unknown token: "<<t<<endl;
                     break;
                 }
-            }
-            default:{
-                // cout<<"unknown token: "<<t<<endl;
-                break;
             }
         }
     }
@@ -179,6 +202,7 @@ Table Table::select(const vectorstr& fields, const string& field, const string& 
 }
 Table Table::select(const vectorstr& fields, Queue<Token*>& postfix){
     vectorlong recnos=_cond(postfix);   //sets rec indices
+    // cout<<"recnos: "<<recnos<<endl;
     return _select_recnos(fields, recnos);
 }
 vectorlong& Table::select_recnos(){
@@ -202,6 +226,9 @@ Table Table::select_all(const vectorstr& fields){
     return _select_recnos(fields, _rec_indices);
 }
 vectorlong Table::_cond(Queue<Token*>& postfix){
+    // for(tokenq::Iterator i=postfix.begin(); i!=postfix.end();i++){
+    //     cout<<**i<<endl;
+    // }
     assert(!postfix.empty());
     Stack<Token*> s;
     vectorlong result;
@@ -212,7 +239,7 @@ vectorlong Table::_cond(Queue<Token*>& postfix){
                 s.push(pop);
                 break;
             }
-            case RELATIONAL:{
+            case RELATIONAL:{   //=, etc
                 Token* right=s.pop();    //stack pop1 = right   (value)
                 Token* left=s.pop();     //stack pop2 = left    (field)
 

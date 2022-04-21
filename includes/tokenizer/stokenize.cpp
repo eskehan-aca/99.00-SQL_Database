@@ -34,7 +34,7 @@ STokenizer& operator >> (STokenizer& s, Token& t){
             case START_SPACES:      type=TOKEN_SPACE;       break;
             case START_OPERATOR:    type=TOKEN_OPERATOR;    break;
             case START_QUOTE:       type=TOKEN_QUOTE;       break;
-            case START_QUOTE+1:       type=TOKEN_QUOTE;       break;
+            case START_QUOTE+1:     type=TOKEN_QUOTE;       break;
             default:                type=TOKEN_UNKNOWN;     break;
         }
     }
