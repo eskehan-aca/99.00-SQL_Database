@@ -74,7 +74,7 @@ bool Parser::tokenize_buffer(){
     while(stk.more()){
         t=Token();
         stk>>t;
-        if(t.type()!=TOKEN_SPACE && t.type()!=TOKEN_PUNC)
+        if(t.type()!=TOKEN_SPACE && t.type()!=TOKEN_PUNC && !t.token_str().empty())
             _input.push(new Token(t));
     }
     // int c=1;

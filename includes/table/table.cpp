@@ -119,7 +119,7 @@ Queue<Token*> Table::_tokenize_vectorstr(const vectorstr& infix){
                 }
             }
             default:{
-                cout<<"unknown token: "<<t<<endl;
+                // cout<<"unknown token: "<<t<<endl;
                 break;
             }
         }

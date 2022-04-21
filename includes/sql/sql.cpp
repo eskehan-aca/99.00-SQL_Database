@@ -1,9 +1,23 @@
 #include "sql.h"
-SQL::SQL(/* args */){}
+SQL::SQL(){}
+SQL::SQL(const string& fname){
+    int queries=0;
+    cout<<"> BATCH PROCESSING FILE \""<<fname<<"\""<<endl;
+    string cmd;
+    ifstream f(fname);
+    assert(f.is_open());
+    while(getline(f,cmd)){
+        if(cmd.substr(0,2)=="//")
+            cout<<cmd<<endl;
+        else if(!cmd.empty())
+            cout<<"["<<++queries<<"]\t"<<cmd<<endl<<command(cmd);
+    }
+    f.close();
+    cout<<"> END OF BATCH PROCESS"<<endl;
+}
 vectorlong& SQL::select_recnos(){
     return _recnos;
 }
-
 Table SQL::command(const string& cmd){
     char c[cmd.size()+1];
     strcpy(c, cmd.c_str());

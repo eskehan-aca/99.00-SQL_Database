@@ -7,6 +7,7 @@
 class SQL{
 public:
     SQL();
+    SQL(const string& fname);
     Table command(const string& cmd);
     vectorlong& select_recnos();
 private:

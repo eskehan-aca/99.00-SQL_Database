@@ -1,12 +1,26 @@
 #include "gtest/gtest.h"
 #include <iostream>
 #include <iomanip>
+#include "../../includes/sql/sql.h"
 using namespace std;
 
-bool test_stub(bool debug = false)
-{
-  if (debug){
-    cout << "testB:: test-sub() entering test_sub" << endl;
+const vectorstr command_list = {
+"make table student fields 	fname, 			lname, 		major, 				age", 
+"insert into student values 	Flo, 			Yao, 		CS, 				20", 
+"insert into student values 	\"Flo\", 			\"Jackson\", 	Math,	 			21", 
+"insert into student values 	Calvin, 		Woo, 		Physics,			22", 
+"insert into student values 	\"Anna Grace\", 	\"Del Rio\", 	CS,	 				22", 
+"select * from student",
+"select * from student where lname = \"Del Rio\""
+};
+
+bool test_stub(bool debug=false){
+  // SQL sql("batchfile.txt");
+  SQL sql;
+  Table t;
+  for (int i=0; i < command_list.size(); i++){
+      cout<<">"<< command_list[i] << endl;
+      cout<<sql.command(command_list[i]);
   }
   return true;
 }
