@@ -9,11 +9,10 @@
 #include <vector>
 #include <cmath>
 #include <set>
-#include "../rpn/rpn.h"
+#include "../tokens/token.h"
 #include "../stack/MyStack.h"
 #include "../queue/MyQueue.h"
 #include "../bplustree/map.h"
-#include "../tokens/token.h"
 #include "../bplustree/multimap.h"
 #include "../tokenizer/ftokenize.h"
 #include "../tokens/token_children.h"

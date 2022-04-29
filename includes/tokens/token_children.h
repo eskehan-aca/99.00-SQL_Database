@@ -40,49 +40,6 @@ public:
         return _precedence;
     }
     virtual ResultSet* evaluate(vector<MMap<string,long>*>& indices, Token* l, Token* r){}
-    // virtual vector<long> evaluate(MMap<string,long>* mmap, Token* l, Token* r){}
-    // virtual ResultSet* evaluate(MMap<string,long> indices, Token* l, Token* r);
-    // vector<long> evaluate(MMap<string,long>* mmap, Token* l, Token* r){
-        // cout<<"op: "<<_op<<endl;
-        // string value=l->token_str();    //left=value
-        // vector<long> recnos;
-        // if(_op=="=="||_op=="="){
-        //     recnos=mmap->at(value);
-        // }
-        // else if(_op==">"){
-        //     MMap<string,long>::Iterator it_beg=mmap->upper_bound(value);
-        //     MMap<string,long>::Iterator it_end=mmap->end();
-        //     for(;it_beg!=it_end; it_beg++){
-        //         for(int i=0; i<(*it_beg).value_list.size(); i++)
-        //             recnos.push_back((*it_beg).value_list[i]);
-        //     }
-        // }
-        // else if(_op==">="){
-        //     MMap<string,long>::Iterator it_beg=mmap->find(value);
-        //     MMap<string,long>::Iterator it_end=mmap->end();
-        //     for(;it_beg!=it_end; it_beg++){
-        //         for(int i=0; i<(*it_beg).value_list.size(); i++)
-        //             recnos.push_back((*it_beg).value_list[i]);
-        //     }
-        // }
-        // else if(_op=="<"){
-        //     MMap<string,long>::Iterator it_beg=mmap->begin();
-        //     MMap<string,long>::Iterator it_end=mmap->find(value);
-        //     for(;it_beg!=it_end; it_beg++){
-        //         for(int i=0; i<(*it_beg).value_list.size(); i++)
-        //             recnos.push_back((*it_beg).value_list[i]);
-        //     }
-        // }
-        // else if(_op=="<="){
-        //     MMap<string,long>::Iterator it_beg=mmap->begin();
-        //     MMap<string,long>::Iterator it_end=mmap->upper_bound(value);
-        //     for(;it_beg!=it_end; it_beg++){
-        //         for(int i=0; i<(*it_beg).value_list.size(); i++)
-        //             recnos.push_back((*it_beg).value_list[i]);
-        //     }
-        // }
-        // return recnos;
-    // }
 private:
     string _op;
     int _precedence;
@@ -112,7 +69,6 @@ public:
         return new ResultSet(evaluate(l,r));
     }
 private:
-    // virtual ResultSet* evaluate(MMap<string,long> indices, Token* l, Token* r);
     string _op;
 };
 
@@ -162,12 +118,7 @@ public:
         }
         return recnos;
     }
-    // virtual ResultSet* evaluate(vector<MMap<string,long>*>& indices, Token* l, Token* r){
-    //     int k=_fields.get(l->token_str());//??????
-    //     return new ResultSet(evaluate(indices[k],r));
-    // }
 private:
-    // virtual ResultSet* evaluate(MMap<string,long> indices, Token* l, Token* r);
     string _op;
 };
 

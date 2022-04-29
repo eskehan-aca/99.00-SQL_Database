@@ -8,25 +8,13 @@ public:
     class Iterator{
     public:
         friend class Stack;                 
-
         //CTOR
         Iterator(node<T>* p=NULL):_ptr(p){}
-
-        //REVISIT RETURN TYPE (no &)? 
         //dereference operator
         T &operator*(){
             assert(_ptr);
             return _ptr->_item;
         }
-        //REMOVED?
-        // //member access operator
-        // T *operator->(){
-        //     assert(_ptr);
-        //     return &(_ptr->_item);
-        // }
-
-
-        //true if _ptr is NULL
         bool is_null(){
             return _ptr==nullptr;
         }
@@ -50,7 +38,6 @@ public:
             it._ptr=(it._ptr->_next);
             return temp;
         }
-
     private:
         node<T>* _ptr;                     //pointer being encapsulated
     };
@@ -76,7 +63,6 @@ public:
         _print_list(printMe._top,outs);
         return outs;
     }
-
 private:
     node<T>* _top;
     int _size;

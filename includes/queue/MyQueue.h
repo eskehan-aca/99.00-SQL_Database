@@ -10,25 +10,14 @@ public:
     class Iterator{
     public:
         friend class Queue;
-
         //CTOR
         Iterator(node<T>* p=NULL):_ptr(p){}    
         
-        //REVISIT RETURN TYPE (no &)? 
         //dereference operator
         T &operator*(){
             assert(_ptr);
             return _ptr->_item;
         }
-        //REMOVED?
-        // //member access operator
-        // T *operator->(){
-        //     assert(_ptr);
-        //     return &(_ptr->_item);
-        // }
-
-
-        //true if _ptr is NULL
         bool is_null(){
             return _ptr==nullptr;
         }
@@ -101,17 +90,13 @@ Queue<T>::Queue(const Queue<T>& copyMe){
     _front=nullptr;
     _rear=_copy_list(_front, copyMe._front);
     _size=copyMe._size;
-    if(queueDebug)
-        cout<<"Queue copy CTOR DEBUG: "<<*this<<endl;
 }
 template <typename T>
 Queue<T>::~Queue(){
     _clear_list(_front);
-    _size=0;        //for debugging purposes only
-    delete _front;  //these all technically unnecessary
+    _size=0;
+    delete _front;
     delete _rear;
-    if(queueDebug)
-        cout<<"~Queue() DEBUG: "<<*this<<endl;//should be empty w/ size 0 
 }
 template <typename T>
 Queue<T>& Queue<T>::operator=(const Queue<T>& RHS){
@@ -120,8 +105,6 @@ Queue<T>& Queue<T>::operator=(const Queue<T>& RHS){
     _clear_list(_front);
     _rear=_copy_list(_front, RHS._front);
     _size=RHS._size;
-    if(queueDebug)
-        cout<<"Queue =op DEBUG: "<<*this<<endl;
     return *this;
 }
 
@@ -143,15 +126,10 @@ template <typename T>
 void Queue<T>::push(T item){
     _rear=_insert_after(_front, _rear, item);
     _size++;
-    if(queueDebug)
-        cout<<"Queue push() DEBUG: [item: "<<item<<"] "<<*this<<endl;
 }
 template <typename T>
 T Queue<T>::pop(){
-    //REVISIT THIS!!
     assert(!empty() && _front);
-    if(queueDebug)
-        cout<<"Queue pop before del: "<<*this<<endl;
     _size--;
     if(_size==0){
         _rear=nullptr;
@@ -178,7 +156,6 @@ template <typename T>
 int Queue<T>::size() const{
     return _size;
 }
-
 
 //----------------------------------------------------------------------------
 

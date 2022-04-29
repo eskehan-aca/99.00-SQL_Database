@@ -49,27 +49,6 @@ void mark_cell(int row, int _table[][MAX_COLUMNS], int col, int state){
 
 //This can realistically be used on a small table
 void print_table(int _table[][MAX_COLUMNS]){
-    /*    cout<<"DIGITS TABLE\n\t";
-    for(int i=0; DIGITS[i]!='\0'; i++){
-        cout<<"[  '"<< DIGITS[i]<<"'\t]";
-    }
-    cout<<"[  '.'\t][OTHER\t]";
-
-    for(int r=0; r<10; r++){
-        cout<<"\nSTATE "<<r<<"\t";
-        for(int c=0; c<12; c++){
-            cout<<"[ "<<_table[r][c]<<"\t]";
-        }
-    }
-    */
-    /*  cout<<"dropbox ab sequence table"
-    for(int r=0; r<10; r++){
-        cout<<"\nSTATE "<<r<<"\t";
-        for(int c=0; c<12; c++){
-            cout<<"[ "<<_table[r][c+'a']<<"\t]";
-        }
-    }
-    */
     for(int c=20; c<100; c++){
         cout<<"[  '"<<char(c)<<"'\t]";
     }
@@ -81,10 +60,6 @@ void print_table(int _table[][MAX_COLUMNS]){
     }
     cout<<endl;
 }
-
-//show string s and mark this position on the string:
-//hello world   pos: 7
-//       ^
 void show_string(char s[], int _pos){
     for(int i=0; s[i]!='\0'; i++){
         cout<<s[i];

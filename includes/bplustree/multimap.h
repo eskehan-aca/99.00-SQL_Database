@@ -133,32 +133,6 @@ template <typename K, typename V>
 MMap<K,V>::MMap(){
     _mmap=map_base();
 }
-
-// ------------------------------------------------------------ Element Access
-/* MM SUBSCRIPT
-    //return vector (values)
-    //+= op: overload vector vector as left argument, value as right argument
-    //classes["joe"]+="cs";
-    //classes[joe] part is a vector reference
-
-    cout<<"read key G: "<<m["G"]<<endl;
-
-    //reading a non_existent key will crash without warning. we will need to deal with this.
-    //  perhaps the operator that will take m["Z"] (operator << in this example) can verify that 
-    //  it is not an empty vector. 
-    //
-    //cout<<"read non_existent key Z: "<<m["Z"]<<endl;
-
-    cout<<"add 99 to the non_existent key Z: ";
-    m["Z"]+=99;                     //returns a reference to an empty vector to which we are pushing back
-                                    //the value 99 could also use m["Z"].push_back(99);
-    cout<<m["Z"]; 
-    
-    //or simply;
-    //cout<<"add 99 to the non_existent key Z: "
-    //    <<(m["Z"]+=99)<<endl;     //could also push_back
-
-*/
 template <typename K, typename V>
 const vector<V>& MMap<K,V>::operator[](const K& key) const{
     assert(_mmap.contains(MPair<K, V>(key)));

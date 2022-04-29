@@ -10,7 +10,6 @@ public:
     ~Table();
 
     void insert_into(const vectorstr& record);
-    // void insert_into(long recno, vectorstr v);
     Table select(const vectorstr& fields, const vectorstr& infix);
     Table select(const vectorstr& fields, const string& field, const string& op, const string& value); //for testing only
     Table select(const vectorstr& fields, Queue<Token*>& conditions);
@@ -19,6 +18,8 @@ public:
     Table select_all(const vectorstr& fields);
 
     vectorlong& select_recnos();
+    vectorstr& get_fields();
+    void set_fields(const vectorstr& fields);
 
     bool set_recnos(const vectorlong& recnos);
     bool empty() const;
@@ -41,8 +42,6 @@ public:
         outs<<endl;
         return outs;
     }
-    vectorstr& get_fields();
-    void set_fields(const vectorstr& fields);
 private:
     //functs
     int _get_last_recno();
@@ -66,9 +65,6 @@ private:
 
     Map<string,long> _fields;           //FIELDNAME, INDEX associated w/ _indices vec
                                         //firstn, 0
-
-    // Map<string,MMap<string,long>>    //fieldname, actual value (eg: first, 'elizabeth', {##, ###, recnos})
-                                        //values associated w the field 
     
     vectorlong _rec_indices;             //'73', 65, 20
     vectorstr _field_names;             //labels
@@ -77,5 +73,8 @@ private:
     bool _empty;
     static int _serial;
 };
+
+// Map<string,MMap<string,long>>    //fieldname, actual value (eg: first, 'elizabeth', {##, ###, recnos})
+                                    //values associated w the field 
 
 #endif // TABLE_H

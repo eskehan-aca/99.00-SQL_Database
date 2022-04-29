@@ -6,7 +6,7 @@ Parser::Parser(char s[]):_success(false){
     make_table();                   //init _table
     build_keyword_list();           //init _keywords
     set_string(s);                  //init _buffer
-    // tokenize_buffer();              //init _input
+    // tokenize_buffer();           //init _input
     // _success=get_parse_tree(_input);
 }
 bool Parser::set_string(char s[]){
@@ -22,15 +22,15 @@ mmap_ss& Parser::parse_tree(){
 bool Parser::make_table(){
     const bool debug=false;
     init_table(_table);
-    mark_fail(_table, 0);           //did not leave start
+    mark_fail(_table, 0);                                           //did not leave start
 
     //select machine - 5 rows
     mark_cell(0,_table,SELECT,SELECT_ROW);
 
     mark_cell(SELECT_ROW,_table,SYMBOL,SELECT_ROW+1);
-    mark_cell(SELECT_ROW+1,_table,SYMBOL,SELECT_ROW+1);         //fields?
+    mark_cell(SELECT_ROW+1,_table,SYMBOL,SELECT_ROW+1);             //fields
     mark_cell(SELECT_ROW+1,_table,FROM,SELECT_ROW+2);           
-    mark_cell(SELECT_ROW+2,_table,SYMBOL,SELECT_ROW+3);         //table name?
+    mark_cell(SELECT_ROW+2,_table,SYMBOL,SELECT_ROW+3);             //table name
     mark_success(_table,SELECT_ROW+3);
     mark_cell(SELECT_ROW+3,_table,WHERE,SELECT_ROW+4);
     mark_cell(SELECT_ROW+4,_table,SYMBOL,SELECT_ROW+5);
@@ -61,11 +61,10 @@ bool Parser::make_table(){
     //drop machine - 2 rows
     mark_cell(0,_table,DROP,DROP_ROW);
     mark_cell(DROP_ROW,_table,TABLE,DROP_ROW+1);
-    mark_cell(DROP_ROW+1,_table,SYMBOL,DROP_ROW+2);   //name of table
+    mark_cell(DROP_ROW+1,_table,SYMBOL,DROP_ROW+2);                 //name of table
     mark_success(_table,DROP_ROW+2);
 }
 bool Parser::tokenize_buffer(){
-    //buffer > input 
     STokenizer stk(_buffer);
     Token t;
     string s="";
@@ -77,10 +76,6 @@ bool Parser::tokenize_buffer(){
         if(t.type()!=TOKEN_SPACE && t.type()!=TOKEN_PUNC && !t.token_str().empty())
             _input.push(new Token(t));
     }
-    // int c=1;
-    // for(tokenq::Iterator i=_input.begin(); i!=_input.end(); i++){
-    //     cout<<"["<<c++<<"]: "<<**i<<endl;
-    // }
 }
 bool Parser::build_keyword_list(){
     //build keywords map - represent cols of table

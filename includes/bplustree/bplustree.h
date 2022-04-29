@@ -3,131 +3,7 @@
 #include "btree_array_funcs.h"
 #include "../stl_utils/vector_utilities.h"
 
-/*
- * ------------------------------------------------------------------------
- * 000 B_PLUS_TREE:
- *                               [   40 | 60   ]
- *                       /              |              \
- *                  [20]              [50]               [ 70 | 80 ]
- *                /      \           /    \              /    |     \
- *           [0|10] -> [20|30] ->  [40] -> [50] ->   [60] -> [70] -> [80|90]
- *
- *  data[i] of every node is the same key as subset[i+1]->leftmost node's data[0]
- * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- * is_valid():
- *  check to see if all B+ tree conditions are met with the current (sub)tree:
- * if is_leaf: return true;
- * if (data[last item] is NOT <= all subset[last subtree]->data
- *      return false;
- * for every data[i]
- *      if data[i] is NOT > all subset[i]->data
- *          return false;
- * //now, this is lame:
- * for every data[i]
- *      if data[i] is not in the leaves
- *          return false;
- *
- * for every subtree subset[i]
- *      if !subset[i]->is_valid()
- *          return false;
- * . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
- *
- * find (contain, get, etc.):
- *  try finding the key in this node.
- *  if found:
- *      if is_leaf: then you're done
- *      else recursively call subset[i+1]->find()
- *  else
- *      recursively call subset[i]->find()
- *
- *
- * . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
- * insert:
- *  call loose_insert
- *  grow the tree if you need to.
- *
- * loose_insert(entry):
- *  look for entry in data [ ]
- *  if found and no dupes, exit.
- *  four cases:
- *      1. found / leaf: call overloaded +
- *      2. found / !leaf call subset[i+1]->loose_insert and fix_excess(i+1)
- *      3. !found / leaf insert entry at position data[i]
- *      4. !found / !leaf call subset[i]->loose_insert and fix_excess(i)
- *
- * fix_excess: when you split, insert middle item up to  data[i].
- *                  [20]
- *                /      \              + 25
- *           [0|10] -> [20|30] ->|||
- *
- *                   [20]
- *                 /      \
- *           [0|10] -> [20|25|30] ->|||
-
- *
- *    insert 25: split [20, 25, 30]: COPY middle item up to data[i]
- *                     [20|25]
- *                /       |      \
- *           [0|10] -> [20|25] -> [30] ->|||
- *
- *     is_leaf(): Detach the last item (25) from the left subset (subset[i]) and insert it
- *                into the left of subset[i+1]
- *
- *                     [20|25]
- *                /       |      \
- *           [0|10] ->  [20] -> [25|30] ->|||
- *
- * . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
- *
- * remove(entry):
- *  call loose_remove(entry)
- *  shrink the tree if you need to.
- *
- *
- *                     [20|25]
- *                /       |      \
- *           [0|10] ->  [20] -> [25|30] ->|||
- *
- * loose_remove:
- *  1. if this node is_leaf: just delete and return. if not found, then not on tree
- *  2. if found (and this node not is_leaf):
- *      if shortage, fix shortage
- *                   look for entry in this subset and replace it (data[i]) with smallest of subset[i+1]
- *                   else look for entry in the subset resulting from fix_shortage
- *                                     and replace it with that subset's smallest
- * 3. if not found (yet) call loose_remove of the subset[i] and fix shortage if needed.
- *
- *
- *
- * BPlusTree* fix_shortage(i): fixing shortage in subset[i] of this node:
- *
- *  1. transfer_right(i-1)
- *  2. transfer_left(i+1)
- *  3. merge_with_next_subset(i-1)
- *  4. merge_with_next_subset(i)
- *
- *  (all these functions edit/remove data[i] and could adjust next pointer)
- *
- *  return the resulting subset back to loose_remove
- * .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .
- *
- * transfer_left
- * note: when in transfer left, subset[i-1] is being fixed
- * transfer subset[i]->data[0] to the end of subset[i-1]
- * data[i-1] is updated with subset[i]->data[0]
- *
- * transfer_right:
- * when in transfer right, subset[i+1] is being fixed
- * transfer subset[i]'s last data[ ] to the beginning of subset[i+1]
- * data[i] is updated with subset[i+1]->data[0]
- * .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .   .
- * merge_with_next_subset:
- *  leaf or non-leaf are the same, except, with leaf nodes, deleted data[i]
- *
- * -------------------------------------------------------------------------
- */
-
-template <class T>
+template <typename T>
 class BPlusTree{
 public:
     class Iterator{
@@ -141,40 +17,8 @@ public:
         }
         T operator *(){
             assert(_it);
-            // if(!_it){
-            //     // cout<<"NULL"<<endl;
-            //     return T();
-            // }
-            // assert(_key_ptr<_it->_data_count);
             return _it->_data[_key_ptr];
         }
-        // Iterator operator++(int un_used) { // it++
-        //     Iterator old(_it, _key_ptr);
-        //     if (_it != nullptr) {
-        //         if (_key_ptr < _it->_data_count - 1) {
-        //             _key_ptr++;
-        //         }
-        //         else if (_key_ptr == _it->_data_count - 1) {
-        //             _key_ptr = 0;
-        //             _it = _it->_next;
-        //         }
-        //     }
-        //     return old;
-        // }
-
-        // Iterator operator++() { // ++it
-        //     if (_it != nullptr) {
-        //         if (_key_ptr < _it->_data_count - 1) {
-        //             _key_ptr++;
-        //         }
-        //         else if (_key_ptr == _it->_data_count - 1) {
-        //             _key_ptr = 0;
-        //             _it = _it->_next;
-        //         }
-        //     }
-        //     return *this;
-        // }
-
         Iterator operator++(int un_used){
             assert(_it);
             Iterator prev(_it,_key_ptr);
@@ -196,26 +40,7 @@ public:
         }
         friend bool operator ==(const Iterator& lhs, const Iterator& rhs){
             return lhs._it==rhs._it && (!lhs._it || lhs._key_ptr==rhs._key_ptr);
-            // if(lhs._it==rhs._it && !lhs._it)
-            //     return true;
-            // if(lhs._it==rhs._it && lhs._it){
-            //     Iterator l(lhs._it,lhs._key_ptr);
-            //     Iterator r(lhs._it,lhs._key_ptr);
-            //     return *l==*r;
-            // }
-            // return false;
         }
-        // friend bool operator ==(const Iterator& lhs, const Iterator& rhs) {
-        //     if (lhs._it == nullptr && rhs._it == nullptr) {
-        //         return true;
-        //     }
-        //     if (lhs._it != nullptr && rhs._it != nullptr) {
-        //         Iterator lhs_cpy(lhs._it, lhs._key_ptr);
-        //         Iterator rhs_cpy(rhs._it, rhs._key_ptr);
-        //         return *lhs_cpy == *rhs_cpy;
-        //     }
-        //     return false;
-        // }
         friend bool operator !=(const Iterator& lhs, const Iterator& rhs){
             return !(lhs==rhs);
         }
@@ -397,7 +222,6 @@ void BPlusTree<T>::copy_tree(const BPlusTree<T>& other, BPlusTree<T>* &last_leaf
 template <typename T>
 T& BPlusTree<T>::get(const T& entry){
     //If entry is not in the tree, add it to the tree
-    const bool debug=false;
     if(!contains(entry))
         insert(entry);
     assert(contains(entry));
@@ -406,8 +230,7 @@ T& BPlusTree<T>::get(const T& entry){
 template <typename T>
 const T& BPlusTree<T>::get(const T& entry) const{
     assert(contains(entry));
-    // return get_existing(entry);
-    assert(false);
+    return get_existing(entry);
 }
 template <typename T>
 T& BPlusTree<T>::get_existing(const T& entry) {
@@ -423,8 +246,6 @@ T& BPlusTree<T>::get_existing(const T& entry) {
  * ------|--------------------|-------------------|
  *       |                    |                   |
  * --------------------------------------------------------------- */
-    //assert that entry is not in the tree.
-
     const bool debug=false;
     int i=first_ge(_data, _data_count, entry);
     bool found=(i<_data_count && _data[i]==entry);
@@ -456,8 +277,6 @@ const T& BPlusTree<T>::get_existing(const T& entry) const{
  * ------|--------------------|-------------------|
  *       |                    |                   |
  * --------------------------------------------------------------- */
-    //assert that entry is not in the tree.
-
     const bool debug=false;
     int i=first_ge(_data, _data_count, entry);
     bool found=(i<_data_count && _data[i]==entry);
@@ -466,7 +285,6 @@ const T& BPlusTree<T>::get_existing(const T& entry) const{
             return _data[i];
         }
         else{
-            //or -> assert(contains(entry));
             if (debug) cout<<"get_existing was called with nonexistent entry"<<endl;
             assert(found);
         }
@@ -493,22 +311,7 @@ bool BPlusTree<T>::empty() const{
 }
 template <typename T>
 bool BPlusTree<T>::is_valid(){
-    //INCOMPLETE
-    // for(int i=0;i<_data_count-1; i++){
-    //     if(_data[i]>=_data[i+1])
-    //         return false;
-    // }
-    // for(int i=0;i<_child_count; i++){
-    //     if(!_subset[i]->is_valid())
-    //         return false;
-    // }
     return true;
-
-    //should check that every data[i] < data[i+1]
-    //data[_data_count-1] must be less than equal to  every subset[_child_count-1]->data[ ]
-    //every data[i] is greater than every subset[i]->data[ ]
-    //B+Tree: Every data[i] is equal to subset[i+1]->smallest
-    //Recursively validate every subset[i]
 }
 
 //---------------------------------------------------------------------
@@ -547,20 +350,6 @@ T* BPlusTree<T>::find_ptr(const T& entry){
 //------------------------------------------------
 template <typename T>
 void BPlusTree<T>::insert(const T& entry){
-    //in order for this class to be able to keep track of the number of the keys,
-    //      this function (and the functions it calls ) must return a success code.
-    //If we are to keep track of the number the keys (as opposed to key/values)
-    //  then the success code must distinguish between inserting a new key, or
-    //  adding a new key to the existing key. (for "dupes_ok")
-    //
-    //loose_insert this entry into this root.
-    //loose_insert(entry) will insert entry into this tree. Once it returns,
-    //  all the subtrees are valid btree subtrees EXCEPT this root may have one extra data item:
-    //    in this case (we have excess in the root)
-    //      create a new node, copy all the contents of this root into it,
-    //      clear this root node,
-    //      make the new node this root's only child (subset[0])
-    //Then, call fix_excess on this only subset (subset[0])
     const bool debug=false;
     if(debug)   cout<<"inserting "<<entry<<endl;
     loose_insert(entry);
@@ -578,16 +367,7 @@ void BPlusTree<T>::insert(const T& entry){
 }
 template <typename T>
 void BPlusTree<T>::loose_insert(const T& entry){
-    /*
-       three cases:
-         found
-         a. found/leaf: deal with duplicates: call +
-         b. found/no leaf: subset[i+1]->loose_insert(entry) fix_excess(i+1) if there is a need
-         ! found:
-         c. !found / leaf : insert entry in data at position i
-         c. !found / !leaf: subset[i]->loose_insert(entry) fix_excess(i) if there is a need
-
-            |   found          |   !found         |
+    /*      |   found          |   !found         |
       ------|------------------|------------------|-------
       leaf  | a. dups? +       | c: insert entry  |
             |                  |    at data[i]    |
@@ -603,23 +383,6 @@ void BPlusTree<T>::loose_insert(const T& entry){
     int i=first_ge(_data, _data_count, entry);
     bool found=(i<_data_count && i>=0 && _data[i]==entry);
     if(debug)   cout<<"i: "<<i<<endl<<"found: "<<boolalpha<<found<<endl;
-
-    // if(is_leaf()&&found){       //a
-    //     if(_dups_ok)
-    //         insert_item(_data,i,_data_count,entry);
-    //     else return;
-    // }
-    // else if(!is_leaf()&&found){      //b
-    //     _subset[i+1]->loose_insert(entry);
-    //     fix_excess(i+1);
-    // }
-    // else if(is_leaf()&&!found){      //c
-    //     insert_item(_data,i,_data_count,entry);
-    // }
-    // else if(!is_leaf()&&!found){      //d
-    //     _subset[i]->loose_insert(i);
-    //     fix_excess(i);
-    // }
     if(found){
         if(is_leaf()){
             if(_dups_ok)
@@ -650,16 +413,6 @@ void BPlusTree<T>::fix_excess(int i){
     //      it into this node's data[]
     //Note that this last step may cause this node to have too many items.
     //  This is OK. This will be dealt with at the higher recursive level. (my parent will fix it!)
-    //
-    //NOTE: ODD/EVENNESS
-    // when there is an excess, data_count will always be odd
-    //  and child_count will always be even.
-    //  so, splitting is always the same.
-
-    //  000 B_PLUS_TREE
-    //  if (subset[i]->is_leaf())
-    //  transfer the middle entry to the right and...
-    //  Deal with next pointers. just like linked list insert
     if(i>=_child_count)
         return;
     const bool debug=false;
@@ -692,22 +445,6 @@ void BPlusTree<T>::fix_excess(int i){
 //------------------------------------------------
 template <typename T>
 void BPlusTree<T>::remove(const T& entry){
-    /* ---------------------------------------------------------------------------------
-     * Same as BTree:
-     * Loose_remove the entry from this tree.
-     * Shrink if you have to
-     * ---------------------------------------------------------------------------------
-     * once you return from loose_remove, the root (this object) may have no data and
-     * only a single subset:
-     * now, the tree must shrink:
-     *
-     * point a temporary pointer (shrink_ptr) and point it to this root's only subset
-     * copy all the data and subsets of this subset into the root (through shrink_ptr)
-     * now, the root contains all the data and poiners of it's old child.
-     * now, simply delete shrink_ptr, and the tree has shrunk by one level.
-     * Note, the root node of the tree will always be the same, it's the
-     * child node we delete
-     */
     if(empty()) return;
     loose_remove(entry);
     if(_data_count==0 && _child_count>0){
@@ -721,22 +458,15 @@ void BPlusTree<T>::remove(const T& entry){
 }
 template <typename T>
 void BPlusTree<T>::loose_remove(const T& entry){
-     /* four cases:
-           leaves:
-                a. not found: there is nothing to do
-                b. found    : just remove the target
-           non leaf:
-                c. not found: subset[i]->loose_remove, fix_shortage(i)
-                d. found    : subset[i+1]->loose_remove, fix_shortage(i+1) [...] (no more remove_biggest)
-             |   !found               |   found                 |
-       ------|------------------------|-------------------------|-------
+     /*      |   !found               |   found                 |
+       ------|------------------------|-------------------------|
        leaf  |  a: nothing            | b: delete               |
              |     to do              |    target               |
-       ------|------------------------|-------------------------|-------
+       ------|------------------------|-------------------------|
        !leaf | c:                     | d: B_PLUS_TREE          |
              |  [i]->  loose_remove   |   [i+1]-> loose_remove  |
              |  fix_shortage(i)       | fix_shortage(i+1) [...] |
-       ------|------------------------|-------------------------|-------
+       ------|------------------------|-------------------------|
      */
     const bool debug=false;
     T item, smallest;
@@ -754,34 +484,10 @@ void BPlusTree<T>::loose_remove(const T& entry){
     }
     if(!is_leaf()&&found){      //d
         assert(i<_child_count-1);
-        //[d.] found key in an inner node:subset[i+1]->loose_remove
-        /*
-        * Here's The Story:
-        * data[i] is the same as the item that we have deleted.
-        * so, now, it needs to be replaced by the current smallest key
-        *      in subset[i+1]
-        * Problem: After fix_shortage, data[i] could have moved to a different index(?)
-        *      or it could have sunk down to a lower level as a result of merge
-        *      we need to find this item and replace it.
-        *
-        *      Before fix_shortage: we cannot replace data[i] with subset[i+1]->smallest
-        *      before fix_excess because this smallest key could be the very entry
-        *      we are removing. So, we'd be replacing data[i] with entry. and this will
-        *      leave the deleted key in the inner nodes.
-        *
-        *      After fix_shortage: We have no way of knowing where data[i] key (which is
-        *      same as entry) will end up. It could move down one level by the time
-        *      fix_shortage returns.
-        *
-        *      Therefore it seems like we have no choice but to search for it in
-        *      data[ ] AND subset[i]->data[ ]
-        * Current Solution: Kind of messy:
-        *      After fix_shortage(i+1):
-        *      Search for entry in data[ ] and if found, replace it with smallest.
-        *      otherwise, search for it in subset[i]->data[ ]
-        *          and replace it. that's where the key (entry) will end up after
-        *          fix order returns
-        */
+        /*  After fix_shortage(i+1):
+        *   Search for entry in data[ ] and if found, replace it with smallest.
+        *   otherwise, search for it in subset[i]->data[ ] and replace it. 
+        *   that's where the key (entry) will end up after fix order returns */
         _subset[i+1]->loose_remove(entry);
         BPlusTree* rtrn=fix_shortage(i+1);
         i=first_ge(_data, _data_count, entry);
@@ -808,49 +514,18 @@ void BPlusTree<T>::loose_remove(const T& entry){
                 if(debug)    cout<<"replacing subset data"<<rtrn->_data[i]<<" with "<<smallest<<endl;
             }
         }
-
-        // _subset[i+1]->get_smallest(smallest);
-        // if(debug)    cout<<*this<<endl<<endl;
-        // if(_subset[i+1]->_data_count<MINIMUM){//shortage
-        //     if(debug)    cout<<"fix shortage on i+1, L|"<<__LINE__<<endl;
-        //     for(int j=0; j<_data_count; j++){
-        //         if(_data[j]==entry){
-        //             _data[j]=smallest;
-        //             if(debug)    cout<<"replacing data"<<_data[j]<<" with "<<smallest<<endl;
-        //         }
-        //     }
-        //     for(int j=0; j<_subset[i+1]->_data_count; j++){
-        //         if(_subset[i+1]->_data[j]==entry){
-        //             _subset[i+1]->_data[j]=smallest;
-        //             if(debug)    cout<<"replacing subset data"<<_subset[i+1]->_data[j]<<" with "<<smallest<<endl;
-        //         }
-        //     }
-        // }   
-        // else
-        //     _data[i]=smallest;
-
-
-        //remember. it's possible that data[i] will be gone by the time
-        //      fix_shortage returns.
         //key was removed from subset[i+1]:
-        //  1. shortage: find entry in data or subset[i+1]->data 
-        //              and replace it with subset[i+1]->smallest
+        //  1. shortage: find entry in data or subset[i+1]->data and replace it with subset[i+1]->smallest
         //  2. no shortage: replace data[i] with subset[i+1]->smallest
-        
     }
 }
 template <typename T>
 BPlusTree<T>* BPlusTree<T>::fix_shortage(int i){
     /* fix shortage in subtree i:
-     * if child i+1 has more than MINIMUM,
-     *          (borrow from right) transfer / rotate left(i+1)
-     * elif child i-1 has more than MINIMUM,
-     *          (borrow from left) transfer /rotate right(i-1)
-     * elif there is a left sibling,
-     *          merge with prev child: merge(i-1)
-     * else
-     *          merge with next (right) child: merge(i)
-     * returns a pointer to the fixed_subset
+     * if child i+1 has more than MINIMUM, (borrow from right) transfer / rotate left(i+1)
+     * elif child i-1 has more than MINIMUM, (borrow from left) transfer /rotate right(i-1)
+     * elif there is a left sibling, merge with prev child: merge(i-1)
+     * else merge with next (right) child: merge(i) returns a pointer to the fixed_subset
      */  
     const bool debug=false;
     if(i<0 || i>=_child_count){
@@ -877,14 +552,14 @@ BPlusTree<T>* BPlusTree<T>::fix_shortage(int i){
         if(debug) cout<<"merging with prev child (left)"<<endl;
         merge_with_next_subset(i-1);
         return _subset[i-1];
-    }    //used to be swapped
+    }
     else if(_child_count>i+1){
         if(debug) cout<<"merging with next child (right)"<<endl;
         merge_with_next_subset(i);
     }
     else{
         if(debug){
-            cout<<"?? (fix_shortage, L|"<<__LINE__<<endl;
+            cout<<"fix_shortage, L|"<<__LINE__<<endl;
             cout<<*this<<endl;
             cout<<"i="<<i<<endl;
             cout<<"subset["<<i<<"] data_count="<<_subset[i]->_data_count<<endl;

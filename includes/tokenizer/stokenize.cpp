@@ -40,7 +40,6 @@ STokenizer& operator >> (STokenizer& s, Token& t){
     }
     else{
         token=s._buffer[s._pos-1];
-        // cout<<"get_token return false"<<endl;
     }
     t=Token(token,type);
     return s;
@@ -151,44 +150,3 @@ bool STokenizer::get_token(int& start_state, string& token){
     }
     return token!="";
 }
-    /*
-    int success = _pos;
-    token = "";
-
-    for (int i = _pos; i < strlen(_buffer); i++) {
-        if (_buffer[i] < 0) {
-            start_state = _table[start_state][MAX_COLUMNS + _buffer[i]];
-        }
-        else {
-            start_state = _table[start_state][_buffer[i]];
-        }
-        // start_state = _table[start_state][_buffer[i]];
-        if (is_success(_table, start_state)) {
-            success = i;
-        }
-        
-        if (start_state == -1 || _buffer[i] == '\0') {
-            break;
-        }
-    }
-
-    for (int i = _pos ; i <= success; i++) {
-        if (_buffer[i] != '\"') {
-            token += _buffer[i];
-        }
-    }
-
-    _pos = success + 1;
-
-    if (token.length() == 0) {
-        return false;
-    }
-    return true;
-
-
-    //start_state holds the state of the valid token
-    //current_state holds the state of the char at pos --> ahead; should end on fail
-    // assert(token!="");
-    // assert(_table[current_state][SUCCESS_COLUMN]!=STATE_SUCCESS || _buffer[_pos]=='\0');
-    // return _table[start_state][SUCCESS_COLUMN]==STATE_SUCCESS;
-    */

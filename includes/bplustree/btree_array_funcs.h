@@ -97,12 +97,6 @@ void ordered_insert(T data[], int& n, T entry){
         data[n++]=entry;
         return;
     }
-    // for(int i=0; i<n; i++){
-    //     if(data[i]>=entry){
-    //         return insert_item(data,i,n,entry);
-    //     }
-    // }
-    // cout<<"insert @index "<<i<<endl;
     int i=first_ge(data,n,entry);
     return insert_item(data,i,n,entry);
 } 
@@ -154,21 +148,12 @@ void split(T data1[], int& n1, T data2[], int& n2){
     n1-=many;
     n2+=many;
     for(int i=0; i<many; i++){
-        // if(debug)       cout<<"move "<<data1[n1+i]<<endl;
         data2[i]=data1[n1+i];
     }
 }
 
 template <typename T> //copy src[] into dest[]
 void copy_array(T dest[], const T src[], int& dest_size, int src_size){
-    // T *destWalker=dest;
-    // const T *srcWalker=src;    
-    // for(int i=0; i<src_size; i++){
-    //     dest_size++;
-    //     *destWalker=*srcWalker;
-    //     destWalker++;
-    //     srcWalker++;
-    // }
     while(dest_size!=0){
         T item;
         delete_item(dest,0,dest_size,item);
@@ -182,10 +167,6 @@ void copy_array(T dest[], const T src[], int& dest_size, int src_size){
         *destWalker=*srcWalker;
         destWalker++;
     }
-    // for(int i=0; i<src_size; i++){
-    //     dest[dest_size+i]=*(new T(src[i]));
-    //     dest_size++;
-    // }
 }        
 
 template <typename T> //print array data
@@ -221,10 +202,6 @@ void shift_right(T *a, int &size, int shift_here){
     T* pointerShiftHere=a+shift_here;
     if(pointerShiftHere==nullptr)
         return; //out of bounds
-
-    // if(debug)       cout<<"shiftR"<<endl;
-    //a+size is already the new (increased size) end of array, so we can start
-    //from that point and work backwards! 
     for (T *walker=a+size; walker>pointerShiftHere; walker--){
         //creating a pointer to copy the value to the left
         T *left_one = walker-1;
@@ -232,15 +209,13 @@ void shift_right(T *a, int &size, int shift_here){
     }
     size++;
 }
-template <class T>
+template <typename T>
 void shift_left(T* a, int& size, int shift_here){
     if(shift_here>size || shift_here<0||size==0)
         return; //out of bounds
     T* pointerShiftHere = a+shift_here;
     if(pointerShiftHere==nullptr)
         return; //out of bounds
-    
-    // if(debug)       cout<<"shiftL"<<endl;
     T *rightOne = pointerShiftHere+1;
     while(rightOne < a+size){
         //shift elements of block to the left starting at position shift_here

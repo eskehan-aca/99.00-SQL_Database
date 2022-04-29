@@ -13,8 +13,13 @@ const vectorstr command_list = {
 "select * from student"
 };
 
-bool test_stub(bool debug=false){
-  // SQL sql("batchfile.txt");
+bool test_batch1(bool debug=false){
+  SQL sql("batchfile.txt");
+}
+bool test_batch2(bool debug=false){
+  SQL sql("batchfile2.txt");
+}
+bool test_quote(bool debug=false){
   SQL sql;
   Table t;
   for (int i=0; i < command_list.size(); i++){
@@ -26,11 +31,10 @@ bool test_stub(bool debug=false){
   return true;
 }
 
-TEST(TEST_STUB, TestStub) {
-  
-  //EXPECT_EQ(0, <your individual test functions are called here>);
-
-  EXPECT_EQ(1, test_stub(false));
+TEST(TEST_B, TestB) {
+  EXPECT_EQ(1, test_quote(false));
+  EXPECT_EQ(1, test_batch1(false));
+  EXPECT_EQ(1, test_batch2(false));
 }
 
 

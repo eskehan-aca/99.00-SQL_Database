@@ -7,7 +7,6 @@ public:
     FileRecord(){
         _record[0][0]='\0';
         recno=-1;
-        //['\0'|  | G | a | r | b | a |  g  |  e |    ]
     }
     FileRecord(char str[]){
         recno=-1;

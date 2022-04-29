@@ -10,8 +10,8 @@
 class ShuntingYard{
 public:
     ShuntingYard();
-    // ShuntingYard(vectorstr &infix);
     ShuntingYard(Queue<Token*> &q);
+    // ShuntingYard(vectorstr &infix);
 
     //modify priv variable
     void infix(Queue<Token*>& q);   //same as set input
@@ -22,7 +22,7 @@ public:
 
 private:
     Queue<Token*> _queue;
-    bool _in_postfix;  //false meaning expression not yet corrected
+    bool _in_postfix;
 };
 
 #endif //SHUNTING_YARD_H 

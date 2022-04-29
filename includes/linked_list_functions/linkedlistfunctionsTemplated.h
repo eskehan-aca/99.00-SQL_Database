@@ -53,12 +53,7 @@ void _clear_list(node<T>*& head);
 template <typename T>
 T& _at(node<T>* head, int pos);
 
-
-
-
-
 //----------------------------------------------------------------------------
-
 
 template <typename T>
 ostream& _print_list(node<T>* head, ostream& outs){
@@ -68,7 +63,6 @@ ostream& _print_list(node<T>* head, ostream& outs){
     outs<<"|||"<<endl;
     return outs;
 }
-
 template <typename T>
 ostream& _print_list_backwards(node<T> *head, ostream& outs){
     // outs<<"|||->";
@@ -77,7 +71,6 @@ ostream& _print_list_backwards(node<T> *head, ostream& outs){
     // outs<<*head<<"H"<<endl;
     return outs;
 }
-
 template <typename T>
 node<T>* _search_list(node<T>* head, T key){
     for(node<T> *walker=head; walker!=nullptr; walker=walker->_next){
@@ -86,7 +79,6 @@ node<T>* _search_list(node<T>* head, T key){
     }
     return nullptr;
 }
-
 template <typename T>
 node<T>* _insert_head(node<T>*& head, T insert_this){
     node<T> *temp=new node<T>(insert_this, head, nullptr);  //create new node
@@ -95,7 +87,6 @@ node<T>* _insert_head(node<T>*& head, T insert_this){
     head=temp;                                              //head to new node
     return temp;
 }
-
 template <typename T>
 node<T>* _insert_after(node<T>*& head, node<T> *after_this, T insert_this){
     if(head==nullptr||after_this==nullptr)
@@ -106,19 +97,16 @@ node<T>* _insert_after(node<T>*& head, node<T> *after_this, T insert_this){
     after_this->_next=temp;
     return temp;
 }
-
 template <typename T>
 node<T>* _insert_before(node<T>*& head, node<T>* before_this, T insert_this){
     return _insert_after(head, before_this->_prev, insert_this);
 }
-
 template <typename T>
 node<T>* _previous_node(node<T>* prev_to_this){
     if(prev_to_this->_prev==nullptr && linkedDebug)
         cout<<"prev node is null (given head)"<<endl;
     return prev_to_this->_prev;
 }
-
 //delete, return item
 template <typename T>
 T _delete_node(node<T>*&head, node<T>* delete_this){
@@ -141,7 +129,6 @@ T _delete_node(node<T>*&head, node<T>* delete_this){
     delete delete_this;
     return pop;
 }
-
 //duplicate the list...
 template <typename T>
 node<T>* _copy_list(node<T>* head){
@@ -152,7 +139,6 @@ node<T>* _copy_list(node<T>* head){
     }
     return newHead;
 }
-
 //duplicate list and return the last node of the copy
 template <typename T>
 node<T> *_copy_list(node<T>* &dest, node<T> *src){
@@ -163,7 +149,6 @@ node<T> *_copy_list(node<T>* &dest, node<T> *src){
     }
     return dstWalker;
 }
-
 //delete all the nodes
 template <typename T>
 void _clear_list(node<T>*& head){
@@ -172,7 +157,6 @@ void _clear_list(node<T>*& head){
     }
     head=nullptr;
 }
-
 //_item at this position
 template <typename T>
 T& _at(node<T>* head, int pos){

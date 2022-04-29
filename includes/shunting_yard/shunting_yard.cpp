@@ -80,7 +80,7 @@ Queue<Token*>& ShuntingYard::postfix(){
     _in_postfix=true;
 
     if(syDebug){
-        // cout<<_queue<<endl;
+        cout<<_queue<<endl;
         int c=1;
         for(Queue<Token*>::Iterator i=_queue.begin(); i!=_queue.end(); i++){
             cout<<"["<<c++<<"]: "<<**i<<endl;

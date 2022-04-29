@@ -14,7 +14,6 @@ public:
 
     virtual int Type() const;
     virtual int Precedence() const;
-
 private:
     string _token;
     int _type;
